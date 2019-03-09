@@ -75,34 +75,35 @@ class Piece{
     }
     return false;
   }
-  //a method to tell if a piece is in check(for kings)
+  //a method to tell how many pieces are attacking me)
   public int attacking(Board board){
-    int a = 0;
-    //look for pawns checking
+    int a = 0;//number of attackers
+    //look for pawns attacking
     if(notNull(board.pieceAt(row + 1 - 2 * this.side, this.coll - 1)) &&
     board.pieceAt(row + 1 - 2 * this.side, this.coll - 1).type == 5 &&
-    board.pieceAt(row + 1 - 2 * this.side, this.coll - 1).side == 1- side){
-      a++;
+    board.pieceAt(row + 1 - 2 * this.side, this.coll - 1).side == 1- side){//if there is a pawn
+      a++;//increment
     } 
     if(notNull(board.pieceAt(row + 1 - 2 * this.side, this.coll + 1))
     && board.pieceAt(row + 1 - 2 * this.side, this.coll + 1).type == 5
-    && board.pieceAt(row + 1 - 2 * this.side, this.coll + 1).side == 1- side){
-      a++;
+    && board.pieceAt(row + 1 - 2 * this.side, this.coll + 1).side == 1- side){//if there is a pawn
+      a++;//increment
     }
     //look for knights checking
-    for(int x = 1; x < 3; x ++){
+    for(int x = 1; x < 3; x ++){//go through all the knight positions
       for(int sig1 = -1; sig1 < 2; sig1 += 2){
         for(int sig2 = -1; sig2 < 2; sig2 += 2){
-          if(notNull(board.pieceAt(row + x * sig1, coll + (3-x) * sig2)) && 
+          if(notNull(board.pieceAt(row + x * sig1, coll + (3-x) * sig2)) &&//if there is a knight there 
           board.pieceAt(row + x * sig1, coll + (3-x) * sig2).type == 3 && 
           board.pieceAt(row + x * sig1, coll + (3-x) * sig2).side == 1-this.side){
-            a++;
+            a++;//increment
           }
         }
       }
     }
     //look for bishops and queens
     int k = 1;
+    //check the diagoanal for bishops and queen
     while(!notNull(board.pieceAt(k + row, k+coll)) && board.inBoard(k + row, k + coll)){
        k++;
     }
@@ -111,6 +112,7 @@ class Piece{
     board.pieceAt(k + row, k + coll).side == 1- this.side){
       return a++;
     }
+    //other direction
     k = -1;
     while(!notNull(board.pieceAt(k + row, k+coll)) && board.inBoard(k + row, k + coll)){
        k--;
@@ -120,6 +122,7 @@ class Piece{
     board.pieceAt(k + row, k + coll).side == 1- this.side){
       return a++;
     }
+    //do the other diagonal
     k = 1;
     while(!notNull(board.pieceAt(k + row, coll - k)) && board.inBoard(row + k, coll - k)){
        k++;
@@ -139,7 +142,7 @@ class Piece{
       a++;
     }
     //looking for rooks and queens who are checking
-    k = 1;
+    k = 1;//look on the rows
     while(!notNull(board.pieceAt(k + row, coll)) && board.inBoard(k + row, coll)){
        k++;
     }
@@ -148,7 +151,7 @@ class Piece{
     board.pieceAt(k + row, coll).side == 1- this.side){
       a++;
     }
-    k = -1;
+    k = -1;//go the other way
     while(!notNull(board.pieceAt(k + row, coll)) && board.inBoard(k + row, coll)){
        k--;
     }
@@ -157,7 +160,7 @@ class Piece{
     board.pieceAt(k + row, coll).side == 1- this.side){
       a++;
     }
-    k = 1;
+    k = 1;//look on the columbs
     while(!notNull(board.pieceAt(row, coll + k)) && board.inBoard(row, coll + k)){
        k++;
     }
@@ -175,17 +178,17 @@ class Piece{
     board.pieceAt(row,coll + k).side == 1- this.side){
       a++;
     }
-    for(int x = -1; x <= 1; x++){
+    for(int x = -1; x <= 1; x++){//look for kings
       for(int y = -1; y <=1; y++){
         if(notNull(board.pieceAt(row + x, coll+ y)) && board.pieceAt(row + x, coll+ y).type == 0 && board.pieceAt(row + x, coll+ y).side == 1- this.side){
           a++;
         }
       }
     }
-    return a;
+    return a;//return the number of attacking pieces
   }
   public boolean inCheck(Board board){
-    return false;
+    return false;//inCheck does nothing normaly
   }
   //a method to update turnsSinceLast
   public void updateTurns(){
