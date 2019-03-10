@@ -60,7 +60,7 @@ class Bishop extends Piece{
         }
       } else if(newRow < row){ //if we are going backward
         //check the diagonal backward
-        int k = -1;/
+        int k = -1;
         while(k>newRow-row && !notNull(board.pieceAt(k + row, coll - k))){
           k--;
         }
