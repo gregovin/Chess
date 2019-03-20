@@ -60,6 +60,153 @@ class Position{
     }
     return true;//they are equal
   }
+  public int[] checkGameOver(int side){
+    King k = (King) this.kings()[side];
+    int[] go = {0, 0};
+    if(k.attacking(b) > 1){
+      boolean canMove = false;
+      for(int i = -1; i < 2 && !canMove; i ++){
+        for(int j = -1; j < 2 && !canMove; j ++){
+          if(i==j && j==0){
+            
+          }else if(!notNull(pieceAt(i + k.row, j + k.coll))){
+            Piece p = new Piece(-1, j+k.coll, i + k.row, "img/Resign.png", side);
+            piecelist[i + k.row][j+ k.coll] = p;
+            if(p.attacking(b) == 0){
+              canMove = true;
+            }
+            piecelist[i+k.row][j+k.coll] = null;
+          }
+        }
+      }
+      if(!canMove){
+        go[0] = 2-side;
+        go[1] = 0;
+      }
+    } else if(k.attacking(b) == 1){
+      boolean canMove = false;
+      for(int i = -1; i < 2 && !canMove; i ++){
+        for(int j = -1; j < 2 && !canMove; j ++){
+          if(i==j && j==0){
+            
+          }else if(b.inBoard(i + k.row, j + k.coll) && !notNull(pieceAt(i + k.row, j + k.coll))){
+            Piece p = new Piece(-1, j+k.coll, i + k.row, "img/Resign.png", side);
+            piecelist[i + k.row][j+ k.coll] = p;
+            if(p.attacking(b) == 0){
+              canMove = true;
+            }
+            piecelist[i+k.row][j+k.coll] = null;
+          }
+        }
+      }
+      if(!canMove){
+         Piece a = k.attackingPieces(b).get(0);
+         println(a.type);
+         boolean canBlock = false;
+         if(a.attacking(b) > 0){
+           ArrayList<Piece> attackers = a.attackingPieces(b);
+           for(int i = 0; i < attackers.size() && !canBlock; i ++){
+             Piece temp = attackers.get(i).clone();
+             if(b.move(attackers.get(i).row, attackers.get(i).coll, p.row, p.coll)){
+               piecelist[a.row][a.coll] = a;
+               piecelist[temp.row][temp.coll] = temp;
+               undoMove();
+               canBlock = true;
+             }
+           }
+         }
+         if(!canBlock && (a.type == 3 || a.type == 5)){
+           go[0] = 2 - side;
+           go[1] = 0;
+         } else if(!canBlock && a.coll == k.coll && (a.type==1 || a.type==2)){
+           int add = sign(a.row-k.row);
+           int d = add;
+           while(d<a.row-k.row && !canBlock){
+             Piece p = new Piece(-1, k.coll, d + k.row, "img/Resign.png", 1-side);
+             piecelist[d+k.row][k.coll] = p;
+             if(p.attacking(b) >0){
+               ArrayList<Piece> attackers = p.attackingPieces(b);
+               for(int i = 0; i < attackers.size() && !canBlock; i ++){
+                 Piece temp = attackers.get(i).clone();
+                 if(b.move(attackers.get(i).row, attackers.get(i).coll, p.row, p.coll)){
+                   piecelist[p.row][p.coll] = null;
+                   piecelist[temp.row][temp.coll] = temp;
+                   undoMove();
+                   canBlock = true;
+                 } else piecelist[p.row][p.coll] = null;
+               }
+             }
+             d += add;
+           }
+         } else if(!canBlock && a.row == k.row && (a.type==1 || a.type==2)){
+           int add = sign(a.coll-k.coll);
+           int d = add;
+           while(d<a.coll-k.coll && !canBlock){
+             Piece p = new Piece(-1,d+k.coll, k.row, "img/Resign.png", 1-side);
+             piecelist[k.row][d+k.coll] = p;
+             if(p.attacking(b) >0){
+               ArrayList<Piece> attackers = p.attackingPieces(b);
+               for(int i = 0; i < attackers.size() && !canBlock; i ++){
+                 Piece temp = attackers.get(i).clone();
+                 if(b.move(attackers.get(i).row, attackers.get(i).coll, p.row, p.coll)){
+                   piecelist[p.row][p.coll] = null;
+                   piecelist[temp.row][temp.coll] = temp;
+                   undoMove();
+                   canBlock = true;
+                 } else piecelist[p.row][p.coll] = null;
+               }
+             }
+             d += add;
+           }
+         } else if(!canBlock && a.row-k.row==a.coll-k.coll && (a.type == 1 || a.type == 4)){
+           int add = sign(a.coll-k.coll);
+           int d = add;
+           while(d<a.coll-k.coll && !canBlock){
+             Piece p = new Piece(-1,d+k.coll, d+k.row, "img/Resign.png", 1-side);
+             piecelist[d+k.row][d+k.coll] = p;
+             if(p.attacking(b) >0){
+               ArrayList<Piece> attackers = p.attackingPieces(b);
+               for(int i = 0; i < attackers.size() && !canBlock; i ++){
+                 Piece temp = attackers.get(i).clone();
+                 if(b.move(attackers.get(i).row, attackers.get(i).coll, p.row, p.coll)){
+                   piecelist[p.row][p.coll] = null;
+                   piecelist[temp.row][temp.coll] = temp;
+                   undoMove();
+                   canBlock = true;
+                 } else piecelist[p.row][p.coll] = null;
+               }
+             }
+             d += add;
+           }
+         } else if(!canBlock && a.row-k.row==k.coll-a.coll && (a.type == 1 || a.type == 4)){
+           println("Diagonal 2");
+           int add = sign(a.row-k.row);
+           int d = add;
+           while(d<a.coll-k.coll && !canBlock){
+             Piece p = new Piece(-1,k.coll-d, k.row+d, "img/Resign.png", 1-side);
+             piecelist[k.row+d][k.coll-d] = p;
+             if(p.attacking(b) >0){
+               ArrayList<Piece> attackers = p.attackingPieces(b);
+               for(int i = 0; i < attackers.size() && !canBlock; i ++){
+                 Piece temp = attackers.get(i).clone();
+                 if(b.move(attackers.get(i).row, attackers.get(i).coll, p.row, p.coll)){
+                   piecelist[p.row][p.coll] = null;
+                   piecelist[temp.row][temp.coll] = temp;
+                   undoMove();
+                   canBlock = true;
+                 } else piecelist[p.row][p.coll] = null;
+               }
+             }
+             d += add;
+           }
+         } else if(!canBlock){
+           go[0] = 2 - side;
+           go[1] = 0;
+         }
+      }
+    }
+    return go;
+  }
   public void teleport(int currow, int curcol, int newrow, int newcol){//teleport from currow, curcol and newrow, necol
     Piece moving = piecelist[currow][curcol];
     if(notNull(moving) && b.inBoard(newrow, newcol)){//make sure there is a piece their
