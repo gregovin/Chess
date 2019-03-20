@@ -33,6 +33,9 @@ public class Board{
       posLs.add(p.clone());//add a clone of the position to the array of positions
       movesSinceIrreversible ++;//we just did an irreversible
       checkThreeFold();//check for a draw
+      int[] go = p.checkGameOver(turn);
+      gameOver = go[0];
+      reasonForGO = go[1];
     }
     return success;//return weather it worked
   }
